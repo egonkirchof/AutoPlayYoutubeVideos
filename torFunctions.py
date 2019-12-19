@@ -9,7 +9,7 @@ Created on Thu Dec 19 11:28:58 2019
 from stem import Signal
 from stem.control import Controller
 from threading import currentThread
-from threadFunctions import t,keepGoing,threadPaused
+import threadFunctions 
 import time
 
 tor_thread = None
@@ -28,7 +28,8 @@ def renew_connection(port=tor_ctrl_port): # for use with Tor
 # This function adds too much complexity to the Threads
 def changeTorIp(interval=30):
     this = currentThread()
-    while keepGoing(this):
+    t = threadFunctions.getListOfThreads()
+    while threadFunctions.keepGoing(this):
         print("Changing Tor IP...")
         # pause all threads
         for tr in t:
@@ -36,10 +37,10 @@ def changeTorIp(interval=30):
         n_threads = len(t)-1 # tor thread is included in t
         paused_threads = 0
         print("Waiting for threads to pause...")
-        while keepGoing(this) and (paused_threads < n_threads):
+        while threadFunctions.keepGoing(this) and (paused_threads < n_threads):
             paused_threads = 0
             for tr in t:
-                if (tr is not this and threadPaused(tr)
+                if (tr is not this and threadFunctions.threadPaused(tr)
                    ) or not tr.is_alive():
                     paused_threads += 1
             time.sleep(1)
@@ -54,8 +55,8 @@ def changeTorIp(interval=30):
         print("Done changing Tor Ip.")
         time_to_wait = interval*60
         print("Next Tor IP in ",time_to_wait," seconds.")
-        print(this,keepGoing(this))
-        while keepGoing(this) and (time_to_wait>0):
+        print(this,threadFunctions.keepGoing(this))
+        while threadFunctions.keepGoing(this) and (time_to_wait>0):
             time_to_wait -= 1
     print("Tor thread killed.")
         

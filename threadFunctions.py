@@ -9,10 +9,13 @@ Created on Thu Dec 19 11:28:00 2019
 #-------------------- Threads 
 
 from threading import Thread
-import torFunctions
+import torFunctions  
 import time
 
 t=[] # list of threads
+
+def getListOfThreads():
+    return t
 
 def keepGoing(tr):
     # check if thread was interrupted (kill attribute was set to True)
@@ -46,27 +49,25 @@ def createThreads(target_function,n_threads=10,use_tor=True):
         tr.start()
         time.sleep(1)
             
-def killThreads(t=t,kill_tor=True):
-    global tor_thread
-    for tr in t:
+def killThreads(threads_to_kill=t,kill_tor=True):
+    for tr in threads_to_kill:
         tr.kill = True
-    if tor_thread and kill_tor:
-        while tor_thread.isAlive(): 
-            tor_thread.kill = True
+    if torFunctions.tor_thread and kill_tor:
+        while torFunctions.tor_thread.isAlive(): 
+            torFunctions.tor_thread.kill = True
             time.sleep(1)
-        tor_thread = None
+        torFunctions.tor_thread = None
         
-def pauseThreads(t,pause_it=True):
-    for tr in t:
+def pauseThreads(threads_to_pause,pause_it=True):
+    for tr in threads_to_pause:
         t.pause = pause_it
         
 def checkThreads():
-    global tor_thread
     for i,tr in enumerate(t):
         if not tr.isAlive():
             del(t[i])
         else:
             print(tr)
-    if tor_thread and not tor_thread.isAlive():
-        tor_thread = None
+    if torFunctions.tor_thread and not torFunctions.tor_thread.isAlive():
+        torFunctions.tor_thread = None
         

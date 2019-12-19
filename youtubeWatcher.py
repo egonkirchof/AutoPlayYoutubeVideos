@@ -6,7 +6,7 @@ import random
 from threading import currentThread
 
 from browserFunctions import newBrowser,loadPage,pageFormat 
-from threadFunctions import keepGoing,threadPaused,createThreads,killThreads,pauseThreads,checkThreads
+from threadFunctions import getListOfThreads,keepGoing,threadPaused,createThreads,killThreads,pauseThreads,checkThreads
 from torFunctions import use_tor,tor_port
 
 #----------------- play video function
@@ -100,8 +100,10 @@ def doIt(max_time_in_minutes=20,max_times=None,max_errors=10):
     
 if __name__ == "__main__":
     # createThread is the function you have to call
+    #to do: allow passing parameters to doIt
     #createThreads(doIt,10,False)
-
+    threads = getListOfThreads()
+    pass
 
 #
 
