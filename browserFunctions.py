@@ -24,7 +24,7 @@ def newBrowser(browser_type="random",mute=True,proxy_port=None,proxy_type="netwo
         if mute: chrome_options.add_argument("--mute-audio")
         return webdriver.Chrome(chrome_options=chrome_options)
     
-    if choice == "Edge": # I don't use it I am not running Windows
+    if choice == "Edge": # I don't use it, I am not running Windows
         return webdriver.Edge() # must have MicrosoftWebDriver.exe in path
         
     # Firefox

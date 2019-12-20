@@ -122,18 +122,6 @@ def doIt(max_time_in_minutes=20,max_times=None,max_errors=10,browser_type="rando
             errors += 1
             if errors==max_errors: break    
         
-        """
-        Not using this functionality anymore. 
-        # if using Tor, pause threads to change IP when necessary
-        # I am not using this anymore
-        thr.paused = False
-        while keepGoing(thr) and threadPaused(thr):
-            if verbose and not thr.paused: print("Thread ",thr.name," paused.")
-            thr.paused = True
-            time.sleep(1)
-        if verbose and thr.paused: print("Thread ",thr.name," resumed.")
-        thr.paused = False
-        """
     #---exiting thread        
     if verbose and not keepGoing(thr): print("Thread interrupted: ",thr.name) 
     if verbose and errors == max_errors: print("Too many errors, thread ", thr.name,".")       
