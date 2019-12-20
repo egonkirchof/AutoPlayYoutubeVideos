@@ -6,7 +6,7 @@ import random
 from threading import currentThread
 
 from browserFunctions import newBrowser,loadPage,pageFormat 
-from threadFunctions import getListOfThreads,keepGoing,threadPaused,createThreads,killThreads,pauseThreads,checkThreads
+from threadFunctions import getListOfThreads,keepGoing,createThreads,killThreads,checkThreads
 from torFunctions import use_tor,tor_port
 
 #----------------- play video function
@@ -52,7 +52,7 @@ def watchVideo(browser,thread,max_time_in_minutes,video_duration):
     if watch_for>video_duration: watch_for = video_duration
     if verbose: print("Playing ",browser.title," for ",watch_for//60," minutes. (",thread.name if thread else "" ,")")    
     
-    while keepGoing(thread) and not threadPaused(thread) and watch_for>0: # wait for watch_for minutes, unless thread is interrupted
+    while keepGoing(thread) and watch_for>0: # wait for watch_for minutes, unless thread is interrupted
         time.sleep(1)
         watch_for -= 1
 
