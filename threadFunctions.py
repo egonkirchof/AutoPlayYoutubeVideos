@@ -28,6 +28,7 @@ def createThreads(target_function,params={},n_threads=10,use_tor=True):
     torFunctions.use_tor = use_tor
     for i in range(n_threads):
         tr = Thread(target=target_function,args=params) #should be doIt
+        print("Creating thread: ",tr.name)
         t.append(tr)
         tr.start()
         time.sleep(1)

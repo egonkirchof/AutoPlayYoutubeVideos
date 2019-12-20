@@ -1,22 +1,23 @@
 # Automatically watches a list of youtube videos for a random amount of time
 # Use threads and Tor to emulate views from different users
 
+verbose = True
+
 import time
 import random
 from threading import currentThread
 
 from browserFunctions import newBrowser,loadPage,pageFormat 
 from threadFunctions import getListOfThreads,keepGoing,createThreads,killThreads,checkThreads
-from torFunctions import use_tor,tor_port
+import torFunctions 
 
-#----------------- play video function
+#----------------- play video functions
 
 # list of videos to play    
 videos = [ "BnMyRl1-FHw", "8PEI8vl-AAQ", "foR27m9-8xY",
         "mHQQYBqRHFk", "DnKKeztGHwU", "9aliKzvbOoY","1VO8VFc0GDs",
         "PeknEnjnDnc"  ]
 
-verbose = True
 
 def startVideo(browser,thread,mute=False):
     """ 
@@ -39,18 +40,18 @@ def startVideo(browser,thread,mute=False):
         time.sleep(1)
         clicked = False
         while keepGoing(thread) and initial_time ==  browser.execute_script("return document.getElementById('movie_player').getCurrentTime()"):
-            if verbose: print("clicking the video - ",thread.name if thread else "")
+            if verbose: print("clicking the video - ", browser.title)
             clicked = True
             browser.find_element_by_id("movie_player").click()
             time.sleep(2)
-        if verbose and not clicked: print("No need to click video - ",thread.name if thread else "")
+        if verbose and not clicked: print("No need to click video - ", browser.title)
      
         
-def watchVideo(browser,thread,max_time_in_minutes,video_duration):
+def watchVideo(browser,thread,max_time_in_minutes):
     video_duration = browser.execute_script("return document.getElementById('movie_player').getDuration()")  
     watch_for = random.randint(1,max_time_in_minutes)*60
     if watch_for>video_duration: watch_for = video_duration
-    if verbose: print("Playing ",browser.title," for ",watch_for//60," minutes. (",thread.name if thread else "" ,")")    
+    if verbose: print("Playing: ",browser.title," for ",watch_for//60," minutes. (",thread.name if thread else "" ,")")    
     
     while keepGoing(thread) and watch_for>0: # wait for watch_for minutes, unless thread is interrupted
         time.sleep(1)
@@ -71,30 +72,29 @@ def playVideo(video,browser,thread,max_time_in_minutes,mute=False):
     try:  
         startVideo(browser,thread,mute) 
         watchVideo(browser,thread,max_time_in_minutes)
-    except:
-        if verbose: print("Error in video page:",video)
+    except Exception as e:
+        if verbose: print("Error in video page ",browser.title,":",e)
         return False
     
     return True
         
 #--------------------- play videos in loop, thread function
     
-
-
-def doIt(max_time_in_minutes=20,max_times=None,max_errors=10,browser_type="random"):
+def doIt(max_time_in_minutes=20,max_times=None,max_errors=10,mute_video=False,mute_browser=True,browser_type="random"):
     """
     Plays videos from "videos" until it is interrupted or max_times is reached
     Set max_time_in_minutes for the maximun amount of minutes to play the video
     """
-    if verbose: print("Do it params:",max_time_in_minutes,max_times,max_errors,browser_type)
-    
+    if verbose: print("Do it params:",max_time_in_minutes,max_times,max_errors,
+                      mute_video,mute_browser,browser_type)
+    if verbose: print("Use tor:",torFunctions.use_tor)
     #---- create a browser
-    if use_tor:
+    if torFunctions.use_tor:
         if verbose: print("Creating browser with Tor")
-        browser = newBrowser(browser_type,proxy_port=tor_port)
+        browser = newBrowser(browser_type,mute_browser,proxy_port=torFunctions.tor_port)
     else:
         if verbose: print("Creating browser")
-        browser = newBrowser()
+        browser = newBrowser(browser_type,mute_browser)
     time.sleep(5) 
      
     #--- init vars
@@ -116,7 +116,7 @@ def doIt(max_time_in_minutes=20,max_times=None,max_errors=10,browser_type="rando
             if repeat_allowed or r not in chosen: break
         chosen.append(r)
         # play it
-        if playVideo(videos[r],browser,thr,max_time_in_minutes): 
+        if playVideo(videos[r],browser,thr,max_time_in_minutes,mute_video): 
             times += 1
         else:
             errors += 1
