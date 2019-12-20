@@ -30,9 +30,9 @@ def threadPaused(tr):
 # It is a very basic thread pool 
 # I am creating my own functions to stop and pause the threads
     
-def createThreads(target_function,n_threads=10,use_tor=True):
+def createThreads(target_function,params={},n_threads=10,use_tor=True):
     
-    # Not using chegTorIp anymore. Too much unnecessary complexity
+    # Not using changeTorIp anymore. Too much unnecessary complexity
     """
     if torFunctions.tor_thread is None and use_tor: #only creates Tor thread once
         print("Creating Tor controller thread.")
@@ -44,7 +44,7 @@ def createThreads(target_function,n_threads=10,use_tor=True):
     torFunctions.use_tor = use_tor
     
     for i in range(n_threads):
-        tr = Thread(target=target_function) #should be doIt
+        tr = Thread(target=target_function,args=params) #should be doIt
         t.append(tr)
         tr.start()
         time.sleep(1)
@@ -52,22 +52,27 @@ def createThreads(target_function,n_threads=10,use_tor=True):
 def killThreads(threads_to_kill=t,kill_tor=True):
     for tr in threads_to_kill:
         tr.kill = True
+        
+    """
     if torFunctions.tor_thread and kill_tor:
         while torFunctions.tor_thread.isAlive(): 
             torFunctions.tor_thread.kill = True
             time.sleep(1)
         torFunctions.tor_thread = None
-        
+    """
+    
 def pauseThreads(threads_to_pause,pause_it=True):
     for tr in threads_to_pause:
         t.pause = pause_it
         
-def checkThreads():
+def checkThreads(t):
     for i,tr in enumerate(t):
         if not tr.isAlive():
             del(t[i])
         else:
             print(tr)
+    """
     if torFunctions.tor_thread and not torFunctions.tor_thread.isAlive():
         torFunctions.tor_thread = None
-        
+    """
+    

@@ -13,8 +13,8 @@ import threadFunctions
 import time
 
 tor_thread = None
-tor_port = 9090 # default is 9050
-tor_ctrl_port = 9091 # default is 9051 I qm uwint 9091
+tor_port = 9050 # default port. 
+tor_ctrl_port = 9051 # 
 use_tor = False
 
 def renew_connection(port=tor_ctrl_port): # for use with Tor

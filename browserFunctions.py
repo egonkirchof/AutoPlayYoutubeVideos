@@ -8,8 +8,26 @@ Created on Thu Dec 19 11:26:44 2019
 
 #-------------- basic browser functions
 from selenium import webdriver
+import random
+
+def newBrowser(browser_type="random",mute=True,proxy_port=None,proxy_type="network.proxy.socks"):
+    choices = ["firefox","chrome"] # since I am using Linux I didn't add Edge
+    if browser_type =="random":
+        choice = choices[random.randint(0,len(choices)-1)]
+    elif browser_type in choices:
+        choice = browser_type
+    else:
+        choice = "firefox"
+    
+    if choice == "chrome":
+        chrome_options = webdriver.ChromeOptions()
+        if mute: chrome_options.add_argument("--mute-audio")
+        return webdriver.Chrome(chrome_options=chrome_options)
+    
+    if choice == "Edge": # I don't use it I am not running Windows
+        return webdriver.Edge() # must have MicrosoftWebDriver.exe in path
         
-def newBrowser(mute=True,proxy_port=None,proxy_type="network.proxy.socks"):
+    # Firefox
     profile = webdriver.FirefoxProfile()
     if proxy_port is not None:
         profile.set_preference("network.proxy.type", 1)
@@ -25,5 +43,5 @@ def loadPage(page,browser):
     return browser.page_source
 
 def pageFormat(video):
-    return "https://www.youtube.com/watch?v="+video+"&autoplay=1"
+    return "https://www.youtube.com/watch?v="+video
 
