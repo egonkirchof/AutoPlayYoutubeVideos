@@ -19,8 +19,10 @@ def newBrowser(browser_type="random",mute=True,proxy_port=None,proxy_type="netwo
     else:
         choice = "firefox"
     
+    print(choice)
     if choice == "chrome":
         chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("--headless")
         if mute: chrome_options.add_argument("--mute-audio")
         if proxy_port:
             chrome_options.add_argument('--proxy-server=socks5://127.0.0.1:' + str(proxy_port))
@@ -31,13 +33,16 @@ def newBrowser(browser_type="random",mute=True,proxy_port=None,proxy_type="netwo
         
     # Firefox
     profile = webdriver.FirefoxProfile()
+    options = webdriver.FirefoxOptions()
+    options.add_argument('-headless')
+ 
     if proxy_port is not None:
         profile.set_preference("network.proxy.type", 1)
         profile.set_preference(proxy_type, "127.0.0.1")
         profile.set_preference("network.proxy.socks_port", proxy_port)
     if mute: 
         profile.set_preference("media.volume_scale", "0.0")
-    return webdriver.Firefox(firefox_profile=profile)
+    return webdriver.Firefox(firefox_profile=profile,firefox_options=options)
     
 def loadPage(page,browser):
     if browser is None: return None

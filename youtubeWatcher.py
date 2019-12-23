@@ -1,7 +1,7 @@
 # Automatically watches a list of youtube videos for a random amount of time
 # Use threads and Tor to emulate views from different users
 
-verbose = True
+verbose = 1
 
 import time
 import random
@@ -16,7 +16,8 @@ import torFunctions
 # list of videos to play    
 videos = [ "BnMyRl1-FHw", "8PEI8vl-AAQ", "foR27m9-8xY",
         "mHQQYBqRHFk", "DnKKeztGHwU", "9aliKzvbOoY","1VO8VFc0GDs",
-        "PeknEnjnDnc"  ]
+        "PeknEnjnDnc" ,"hp7RsKLzAHQ","0MWSakI5iaU","Wrd1MV3L6s8","O7n71tUUop8" 
+        ]
 
 
 def startVideo(browser,thread,mute=False):
@@ -40,11 +41,11 @@ def startVideo(browser,thread,mute=False):
         time.sleep(1)
         clicked = False
         while keepGoing(thread) and initial_time ==  browser.execute_script("return document.getElementById('movie_player').getCurrentTime()"):
-            if verbose: print("clicking the video - ", browser.title)
+            if verbose>1: print("clicking the video - ", browser.title)
             clicked = True
             browser.find_element_by_id("movie_player").click()
             time.sleep(2)
-        if verbose and not clicked: print("No need to click video - ", browser.title)
+        if verbose>1 and not clicked: print("No need to click video - ", browser.title)
      
         
 def watchVideo(browser,thread,max_time_in_minutes):
@@ -85,18 +86,20 @@ def doIt(max_time_in_minutes=20,max_times=None,max_errors=10,mute_video=False,mu
     Plays videos from "videos" until it is interrupted or max_times is reached
     Set max_time_in_minutes for the maximun amount of minutes to play the video
     """
-    if verbose: print("Do it params:",max_time_in_minutes,max_times,max_errors,
+    if verbose>1: print("Do it params:",max_time_in_minutes,max_times,max_errors,
                       mute_video,mute_browser,browser_type)
-    if verbose: print("Use tor:",torFunctions.use_tor)
+    #if verbose: print("Use tor:",torFunctions.use_tor)
+    
     #---- create a browser
     if torFunctions.use_tor:
-        if verbose: print("Creating browser with Tor")
+        if verbose>1: print("Creating browser with Tor")
         browser = newBrowser(browser_type,mute_browser,proxy_port=torFunctions.tor_port)
     else:
-        if verbose: print("Creating browser")
+        if verbose>1: print("Creating browser")
         browser = newBrowser(browser_type,mute_browser)
     time.sleep(5) 
-     
+    browser.implicitly_wait(10)
+    
     #--- init vars
     thr = currentThread()
     thr.browser = browser
@@ -125,7 +128,7 @@ def doIt(max_time_in_minutes=20,max_times=None,max_errors=10,mute_video=False,mu
     #---exiting thread        
     if verbose and not keepGoing(thr): print("Thread interrupted: ",thr.name) 
     if verbose and errors == max_errors: print("Too many errors, thread ", thr.name,".")       
-    if verbose: print("Thread ended. Execution time ",thr.name,":", time.time() - start)
+    if verbose: print("Thread ended. Execution time ",thr.name,":", time.time() - start,". Errors: ",errors)
     browser.close()
 
 #·---------------------------

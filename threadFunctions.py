@@ -44,4 +44,6 @@ def checkThreads(t):
         else:
             print(tr)
  
-    
+def threadsAlive(t):
+    return sum([ 1 for tr in t if tr.isAlive()])
+
